@@ -1,0 +1,163 @@
+[
+  {
+    "message_id": "MSG-001",
+    "sender": "synthetic.customer1@example.test",
+    "subject": "Home loan application 1",
+    "body": "Please review my home loan mortgage application. My EMI account is 991100220001 and customer ID is CUST000001.",
+    "received_at": "2026-01-01T09:00:00Z",
+    "expected_department": "Loans"
+  },
+  {
+    "message_id": "MSG-002",
+    "sender": "synthetic.customer2@example.test",
+    "subject": "Home loan application 2",
+    "body": "Please review my home loan mortgage application. My EMI account is 991100220002 and customer ID is CUST000002.",
+    "received_at": "2026-01-02T09:00:00Z",
+    "expected_department": "Loans"
+  },
+  {
+    "message_id": "MSG-003",
+    "sender": "synthetic.customer3@example.test",
+    "subject": "Home loan application 3",
+    "body": "Please review my home loan mortgage application. My EMI account is 991100220003 and customer ID is CUST000003.",
+    "received_at": "2026-01-03T09:00:00Z",
+    "expected_department": "Loans"
+  },
+  {
+    "message_id": "MSG-004",
+    "sender": "synthetic.customer4@example.test",
+    "subject": "Home loan application 4",
+    "body": "Please review my home loan mortgage application. My EMI account is 991100220004 and customer ID is CUST000004.",
+    "received_at": "2026-01-04T09:00:00Z",
+    "expected_department": "Loans"
+  },
+  {
+    "message_id": "MSG-005",
+    "sender": "synthetic.customer5@example.test",
+    "subject": "Home loan application 5",
+    "body": "Please review my home loan mortgage application. My EMI account is 991100220005 and customer ID is CUST000005.",
+    "received_at": "2026-01-05T09:00:00Z",
+    "expected_department": "Loans"
+  },
+  {
+    "message_id": "MSG-006",
+    "sender": "synthetic.customer6@example.test",
+    "subject": "Credit card limit request 1",
+    "body": "Please increase the limit on my credit card. The linked account is 991100220006 and my PAN is ABCDE0006F.",
+    "received_at": "2026-01-06T09:00:00Z",
+    "expected_department": "Credit"
+  },
+  {
+    "message_id": "MSG-007",
+    "sender": "synthetic.customer7@example.test",
+    "subject": "Credit card limit request 2",
+    "body": "Please increase the limit on my credit card. The linked account is 991100220007 and my PAN is ABCDE0007F.",
+    "received_at": "2026-01-07T09:00:00Z",
+    "expected_department": "Credit"
+  },
+  {
+    "message_id": "MSG-008",
+    "sender": "synthetic.customer8@example.test",
+    "subject": "Credit card limit request 3",
+    "body": "Please increase the limit on my credit card. The linked account is 991100220008 and my PAN is ABCDE0008F.",
+    "received_at": "2026-01-08T09:00:00Z",
+    "expected_department": "Credit"
+  },
+  {
+    "message_id": "MSG-009",
+    "sender": "synthetic.customer9@example.test",
+    "subject": "Credit card limit request 4",
+    "body": "Please increase the limit on my credit card. The linked account is 991100220009 and my PAN is ABCDE0009F.",
+    "received_at": "2026-01-09T09:00:00Z",
+    "expected_department": "Credit"
+  },
+  {
+    "message_id": "MSG-010",
+    "sender": "synthetic.customer10@example.test",
+    "subject": "Credit card limit request 5",
+    "body": "Please increase the limit on my credit card. The linked account is 991100220010 and my PAN is ABCDE0010F.",
+    "received_at": "2026-01-10T09:00:00Z",
+    "expected_department": "Credit"
+  },
+  {
+    "message_id": "MSG-011",
+    "sender": "synthetic.customer11@example.test",
+    "subject": "Complaint about failed transfer 1",
+    "body": "I want to raise a complaint for a failed transfer and incorrect fee. Call me on +91 90000 00011; customer ID CUST000011.",
+    "received_at": "2026-01-11T09:00:00Z",
+    "expected_department": "Complaints"
+  },
+  {
+    "message_id": "MSG-012",
+    "sender": "synthetic.customer12@example.test",
+    "subject": "Complaint about failed transfer 2",
+    "body": "I want to raise a complaint for a failed transfer and incorrect fee. Call me on +91 90000 00012; customer ID CUST000012.",
+    "received_at": "2026-01-12T09:00:00Z",
+    "expected_department": "Complaints"
+  },
+  {
+    "message_id": "MSG-013",
+    "sender": "synthetic.customer13@example.test",
+    "subject": "Complaint about failed transfer 3",
+    "body": "I want to raise a complaint for a failed transfer and incorrect fee. Call me on +91 90000 00013; customer ID CUST000013.",
+    "received_at": "2026-01-13T09:00:00Z",
+    "expected_department": "Complaints"
+  },
+  {
+    "message_id": "MSG-014",
+    "sender": "synthetic.customer14@example.test",
+    "subject": "Complaint about failed transfer 4",
+    "body": "I want to raise a complaint for a failed transfer and incorrect fee. Call me on +91 90000 00014; customer ID CUST000014.",
+    "received_at": "2026-01-14T09:00:00Z",
+    "expected_department": "Complaints"
+  },
+  {
+    "message_id": "MSG-015",
+    "sender": "synthetic.customer15@example.test",
+    "subject": "Complaint about failed transfer 5",
+    "body": "I want to raise a complaint for a failed transfer and incorrect fee. Call me on +91 90000 00015; customer ID CUST000015.",
+    "received_at": "2026-01-15T09:00:00Z",
+    "expected_department": "Complaints"
+  },
+  {
+    "message_id": "MSG-016",
+    "sender": "synthetic.customer16@example.test",
+    "subject": "Treasury FX instruction 1",
+    "body": "Please book an FX forward treasury trade and confirm the settlement account 991100220016. Contact treasury16@example.test.",
+    "received_at": "2026-01-16T09:00:00Z",
+    "expected_department": "Treasury"
+  },
+  {
+    "message_id": "MSG-017",
+    "sender": "synthetic.customer17@example.test",
+    "subject": "Treasury FX instruction 2",
+    "body": "Please book an FX forward treasury trade and confirm the settlement account 991100220017. Contact treasury17@example.test.",
+    "received_at": "2026-01-17T09:00:00Z",
+    "expected_department": "Treasury"
+  },
+  {
+    "message_id": "MSG-018",
+    "sender": "synthetic.customer18@example.test",
+    "subject": "Treasury FX instruction 3",
+    "body": "Please book an FX forward treasury trade and confirm the settlement account 991100220018. Contact treasury18@example.test.",
+    "received_at": "2026-01-18T09:00:00Z",
+    "expected_department": "Treasury"
+  },
+  {
+    "message_id": "MSG-019",
+    "sender": "synthetic.customer19@example.test",
+    "subject": "Treasury FX instruction 4",
+    "body": "Please book an FX forward treasury trade and confirm the settlement account 991100220019. Contact treasury19@example.test.",
+    "received_at": "2026-01-19T09:00:00Z",
+    "expected_department": "Treasury"
+  },
+  {
+    "message_id": "MSG-020",
+    "sender": "synthetic.customer20@example.test",
+    "subject": "Treasury FX instruction 5",
+    "body": "Please book an FX forward treasury trade and confirm the settlement account 991100220020. Contact treasury20@example.test.",
+    "received_at": "2026-01-20T09:00:00Z",
+    "expected_department": "Treasury"
+  }
+]
+

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meridian-email-analytics-agent"
+version = "0.1.0"
+description = "Proof of concept for PII-safe banking email CTD classification and routing"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.6,<2",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.4,<10"]
+
+[project.scripts]
+email-analytics-poc = "email_analytics_agent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["email_analytics_agent*"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
