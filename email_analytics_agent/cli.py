@@ -1,4 +1,4 @@
-"""Command-line demonstration of the complete mocked email analytics flow."""
+"""Command-line demonstration of the local polling-shaped analytics flow."""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Sequence
 
 from .factory import build_default_system
-from .ingestion import MockEventStream, MockIngestionPipeline, MockMailConnector
 from .models import EmailMessage
 
 
@@ -42,17 +41,21 @@ def load_messages(path: Path) -> list[EmailMessage]:
 
 
 def run(input_path: Path, audit_path: Path) -> dict[str, object]:
-    """Ingest, process, and summarize all emails in one deterministic run."""
+    """Process Graph-shaped fixture emails and summarize one deterministic run.
+
+    The JSON fixture represents messages immediately after Graph conversion.
+    Live Graph polling is exposed through ``build_graph_polling_system`` and is
+    kept out of this offline demonstration so tests never require credentials.
+    """
 
     messages = load_messages(input_path)
-    stream = MockEventStream()
-    ingested = MockIngestionPipeline(MockMailConnector(messages), stream).ingest()
+    ingested = len(messages)
     system = build_default_system(audit_path)
     decisions: Counter[str] = Counter()
     queues: Counter[str] = Counter()
 
-    while event := stream.consume("raw-emails"):
-        result = system.manager.process_email(event.email)
+    for message in messages:
+        result = system.manager.process_email(message)
         decisions[result.decision] += 1
         queues[result.target_queue] += 1
 

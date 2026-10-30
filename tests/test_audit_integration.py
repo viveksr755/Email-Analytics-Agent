@@ -28,17 +28,19 @@ def test_audit_captures_exact_paths_and_all_confidence_scores(tmp_path: Path) ->
         _email("AUDIT-HIGH", "Home loan mortgage", "Loan EMI disbursement for 991100221234.")
     )
     fallback = system.manager.process_email(
-        _email("AUDIT-LOW", "Rollover", "Roll over our USD INR forward and currency hedge.")
+        _email("AUDIT-LOW", "Position extension", "Please arrange a rollover for this position.")
     )
 
     entries = system.audit_log.entries()
     assert len(entries) == 2
     assert entries[0].run_id == direct.run_id
+    assert entries[0].storage_key == direct.storage_key
+    assert entries[0].model_source == "sklearn-word-char-logreg-v2"
     assert entries[0].decision_path == direct.decision_path
-    assert set(entries[0].confidence_scores) == {"baseline"}
+    assert set(entries[0].confidence_scores) == {"ml"}
     assert entries[1].run_id == fallback.run_id
     assert entries[1].decision_path == fallback.decision_path
-    assert set(entries[1].confidence_scores) == {"baseline", "rag"}
+    assert set(entries[1].confidence_scores) == {"ml", "rag"}
     assert entries[1].previous_hash == entries[0].entry_hash
     assert system.audit_log.verify_integrity()
 

@@ -23,6 +23,7 @@ class AuditEntry:
     timestamp: str
     run_id: str
     message_id: str
+    storage_key: str
     event_type: str
     decision: str
     ctd: dict[str, str]
@@ -30,6 +31,7 @@ class AuditEntry:
     final_confidence: float
     model_source: str
     target_queue: str
+    downstream_id: str
     risk_flags: tuple[str, ...]
     decision_path: tuple[str, ...]
     previous_hash: str
@@ -79,24 +81,58 @@ class ImmutableAuditLog:
                 continue
             try:
                 value = json.loads(line)
+                value.setdefault("downstream_id", "")
+                value.setdefault("storage_key", value.get("message_id", ""))
                 value["risk_flags"] = tuple(value["risk_flags"])
                 value["decision_path"] = tuple(value["decision_path"])
-                self._entries.append(AuditEntry(**value))
+                entry = AuditEntry(**value)
+                if any(existing.run_id == entry.run_id for existing in self._entries):
+                    raise ValueError(f"duplicate audit run_id on line {line_number}")
+                self._entries.append(entry)
             except (KeyError, TypeError, json.JSONDecodeError) as error:
                 raise ValueError(f"invalid audit entry on line {line_number}") from error
 
     def record_decision(self, result: ProcessResult) -> AuditEntry:
-        """Append a structured routing result and return its immutable record."""
+        """Append one routing result idempotently by workflow run ID."""
 
         with self._lock:
+            existing = next(
+                (entry for entry in self._entries if entry.run_id == result.run_id),
+                None,
+            )
+            if existing is not None:
+                storage_matches = existing.storage_key == (
+                    result.storage_key or result.message_id
+                ) or (
+                    existing.schema_version in {"1.0", "1.1"}
+                    and existing.message_id == result.message_id
+                )
+                same_result = (
+                    existing.message_id == result.message_id
+                    and storage_matches
+                    and existing.decision == result.decision
+                    and existing.ctd == result.prediction.label.to_dict()
+                    and existing.confidence_scores == dict(result.confidence_scores)
+                    and existing.final_confidence == result.prediction.confidence
+                    and existing.model_source == result.prediction.source
+                    and existing.target_queue == result.target_queue
+                    and existing.downstream_id == result.downstream_id
+                    and existing.risk_flags == tuple(result.risk_flags)
+                    and existing.decision_path == tuple(result.decision_path)
+                )
+                if not same_result:
+                    raise ValueError(f"conflicting audit result for run_id: {result.run_id}")
+                return existing
+
             previous_hash = self._entries[-1].entry_hash if self._entries else self.GENESIS_HASH
             payload: dict[str, Any] = {
-                "schema_version": "1.0",
+                "schema_version": "1.2",
                 "sequence": len(self._entries),
                 "event_id": str(uuid4()),
                 "timestamp": utc_now_iso(),
                 "run_id": result.run_id,
                 "message_id": result.message_id,
+                "storage_key": result.storage_key or result.message_id,
                 "event_type": "routing_decision",
                 "decision": result.decision,
                 "ctd": result.prediction.label.to_dict(),
@@ -104,6 +140,7 @@ class ImmutableAuditLog:
                 "final_confidence": result.prediction.confidence,
                 "model_source": result.prediction.source,
                 "target_queue": result.target_queue,
+                "downstream_id": result.downstream_id,
                 "risk_flags": tuple(result.risk_flags),
                 "decision_path": tuple(result.decision_path),
                 "previous_hash": previous_hash,
@@ -131,6 +168,10 @@ class ImmutableAuditLog:
         for expected_sequence, entry in enumerate(self._entries):
             payload = entry.to_dict()
             entry_hash = payload.pop("entry_hash")
+            if entry.schema_version == "1.0":
+                payload.pop("downstream_id", None)
+            if entry.schema_version in {"1.0", "1.1"}:
+                payload.pop("storage_key", None)
             if entry.sequence != expected_sequence or entry.previous_hash != expected_previous:
                 return False
             if self._calculate_hash(payload) != entry_hash:

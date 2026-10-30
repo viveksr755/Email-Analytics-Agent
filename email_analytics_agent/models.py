@@ -115,6 +115,9 @@ class ProcessResult:
     decision_path: tuple[str, ...]
     risk_flags: tuple[str, ...] = ()
     confidence_scores: Mapping[str, float] = field(default_factory=dict)
+    downstream_id: str = ""
+    was_skipped: bool = False
+    storage_key: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize the outcome for the CLI and integration boundaries."""
@@ -133,4 +136,12 @@ class QueueItem:
     prediction: Prediction
     risk_flags: tuple[str, ...]
     enqueued_at: str = field(default_factory=utc_now_iso)
+    source_idempotency_key: str = ""
+
+    @property
+    def idempotency_key(self) -> str:
+        """Return one routing-operation key independent of recomputed destination."""
+
+        source_key = self.source_idempotency_key or self.message_id
+        return f"{source_key}:routing:v1"
 

@@ -8,7 +8,7 @@ class AgentConfig:
     """Control confidence thresholds and safety limits for one agent instance.
 
     Attributes:
-        ml_confidence_threshold: Minimum baseline score that bypasses RAG.
+        ml_confidence_threshold: Minimum trained-model probability that bypasses RAG.
         llm_confidence_threshold: Minimum safe RAG score for automatic routing.
         summary_word_limit: Maximum words included in a receiving-team summary.
         rag_result_limit: Maximum routing-policy chunks supplied to the local LLM.

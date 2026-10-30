@@ -1,6 +1,7 @@
-"""Phase-three tests for confidence gating and safe RAG classification."""
+"""Tests for genuine ML probabilities and safe RAG classification."""
 
-from email_analytics_agent.classification import BaselineCTDClassifier
+from email_analytics_agent.classification import SklearnCTDClassifier
+from email_analytics_agent.config import AgentConfig
 from email_analytics_agent.guardrails import ComplianceGuardrailAgent
 from email_analytics_agent.rag import LocalLLMClient, RAGClassificationAgent, seed_routing_policies
 from email_analytics_agent.storage import MockVectorStore
@@ -15,32 +16,34 @@ def _build_rag() -> tuple[RAGClassificationAgent, LocalLLMClient]:
     return RAGClassificationAgent(vectors, client, ComplianceGuardrailAgent()), client
 
 
-def test_baseline_returns_high_confidence_for_common_email() -> None:
-    """Verify common loan terms produce a high-confidence CTD prediction."""
+def test_trained_model_returns_high_probability_for_common_email() -> None:
+    """Verify a learned loan example exceeds the automatic-routing threshold."""
 
-    prediction = BaselineCTDClassifier().predict(
-        "Home loan mortgage application with EMI and disbursement question."
+    prediction = SklearnCTDClassifier().predict(
+        "Subject: Mortgage approval status\nBody: Please provide my home loan EMI schedule."
     )
 
     assert prediction.label.department == "Loans"
     assert prediction.confidence >= 0.80
+    assert prediction.source == "sklearn-word-char-logreg-v2"
 
 
-def test_baseline_returns_low_confidence_for_ambiguous_email() -> None:
-    """Verify tied or absent evidence is handed to the fallback layer."""
+def test_trained_model_returns_low_probability_for_out_of_distribution_email() -> None:
+    """Verify unfamiliar language is delegated instead of being force-routed."""
 
-    prediction = BaselineCTDClassifier().predict("Please help with my unusual banking request.")
+    prediction = SklearnCTDClassifier().predict(
+        "Subject: Position extension\nBody: Please arrange a rollover for this position."
+    )
 
-    assert prediction.label.department == "RM Review"
-    assert prediction.confidence < 0.80
+    assert prediction.confidence < AgentConfig().ml_confidence_threshold
 
 
-def test_rag_handles_semantics_not_present_in_baseline_rules() -> None:
-    """Verify policy-augmented fallback resolves a low-confidence FX intent."""
+def test_rag_handles_semantics_not_learned_by_the_ml_model() -> None:
+    """Verify the fallback resolves an intentionally held-out rollover intent."""
 
     rag, client = _build_rag()
-    text = "Please roll over our USD INR forward and maintain the currency hedge."
-    assert BaselineCTDClassifier().predict(text).confidence < 0.80
+    text = "Please arrange a rollover for this position."
+    assert SklearnCTDClassifier().predict(text).confidence < AgentConfig().ml_confidence_threshold
 
     result = rag.classify(text)
 
@@ -58,7 +61,7 @@ def test_rag_redacts_raw_pii_before_the_mock_llm_receives_it() -> None:
     raw_account = "991100221234"
     raw_email = "alice@example.com"
 
-    rag.classify(f"Roll over the FX forward for {raw_account}; contact {raw_email}.")
+    rag.classify(f"Rollover request for {raw_account}; contact {raw_email}.")
 
     assert len(client.calls) == 1
     assert raw_account not in client.calls[0].email_text

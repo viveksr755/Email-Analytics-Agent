@@ -1,0 +1,774 @@
+{
+  "artifact_schema_version": "2.0",
+  "artifact_sha256": "305f662970ba6070487ad05d7e12d1763003081e6073bbf276bd40e9225f0396",
+  "calibration_class_counts": {
+    "Complaints": 20,
+    "Credit": 20,
+    "Loans": 20,
+    "Treasury": 20
+  },
+  "calibration_count": 80,
+  "calibration_metrics": {
+    "accuracy": 1.0,
+    "brier_score": 0.007272,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Credit": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Loans": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Treasury": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 80.0
+      },
+      "weighted avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 80.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        20,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        20,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        20,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        20
+      ]
+    ],
+    "count": 80,
+    "expected_calibration_error": 0.061744,
+    "log_loss": 0.064372,
+    "macro_f1": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "mean_confidence": 0.938256,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 80,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.70": {
+        "count": 80,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.80": {
+        "count": 80,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.90": {
+        "count": 70,
+        "coverage": 0.875,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "challenge_class_counts": {
+    "Complaints": 10,
+    "Credit": 10,
+    "Loans": 10,
+    "Treasury": 10
+  },
+  "challenge_count": 40,
+  "challenge_validation": {
+    "accuracy": 0.75,
+    "brier_score": 0.319537,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 0.6956521739130435,
+        "precision": 0.6153846153846154,
+        "recall": 0.8,
+        "support": 10.0
+      },
+      "Credit": {
+        "f1-score": 0.8,
+        "precision": 0.8,
+        "recall": 0.8,
+        "support": 10.0
+      },
+      "Loans": {
+        "f1-score": 0.7368421052631579,
+        "precision": 0.7777777777777778,
+        "recall": 0.7,
+        "support": 10.0
+      },
+      "Treasury": {
+        "f1-score": 0.7777777777777778,
+        "precision": 0.875,
+        "recall": 0.7,
+        "support": 10.0
+      },
+      "accuracy": 0.75,
+      "macro avg": {
+        "f1-score": 0.7525680142384947,
+        "precision": 0.7670405982905983,
+        "recall": 0.75,
+        "support": 40.0
+      },
+      "weighted avg": {
+        "f1-score": 0.7525680142384947,
+        "precision": 0.7670405982905983,
+        "recall": 0.75,
+        "support": 40.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        8,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        8,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        7,
+        1
+      ],
+      [
+        2,
+        1,
+        0,
+        7
+      ]
+    ],
+    "count": 40,
+    "expected_calibration_error": 0.125464,
+    "log_loss": 0.563036,
+    "macro_f1": 0.752568,
+    "macro_precision": 0.767041,
+    "macro_recall": 0.75,
+    "mean_confidence": 0.731216,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 30,
+        "coverage": 0.75,
+        "errors": 4,
+        "selective_accuracy": 0.866667,
+        "selective_risk": 0.133333
+      },
+      "0.70": {
+        "count": 25,
+        "coverage": 0.625,
+        "errors": 2,
+        "selective_accuracy": 0.92,
+        "selective_risk": 0.08
+      },
+      "0.80": {
+        "count": 19,
+        "coverage": 0.475,
+        "errors": 2,
+        "selective_accuracy": 0.894737,
+        "selective_risk": 0.105263
+      },
+      "0.90": {
+        "count": 5,
+        "coverage": 0.125,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "combined_holdout": {
+    "accuracy": 0.916667,
+    "brier_score": 0.1228,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 0.8888888888888888,
+        "precision": 0.8484848484848485,
+        "recall": 0.9333333333333333,
+        "support": 30.0
+      },
+      "Credit": {
+        "f1-score": 0.9333333333333333,
+        "precision": 0.9333333333333333,
+        "recall": 0.9333333333333333,
+        "support": 30.0
+      },
+      "Loans": {
+        "f1-score": 0.9152542372881356,
+        "precision": 0.9310344827586207,
+        "recall": 0.9,
+        "support": 30.0
+      },
+      "Treasury": {
+        "f1-score": 0.9310344827586207,
+        "precision": 0.9642857142857143,
+        "recall": 0.9,
+        "support": 30.0
+      },
+      "accuracy": 0.9166666666666666,
+      "macro avg": {
+        "f1-score": 0.9171277355672446,
+        "precision": 0.9192845947156292,
+        "recall": 0.9166666666666666,
+        "support": 120.0
+      },
+      "weighted avg": {
+        "f1-score": 0.9171277355672446,
+        "precision": 0.9192845947156292,
+        "recall": 0.9166666666666666,
+        "support": 120.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        28,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        28,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        27,
+        1
+      ],
+      [
+        2,
+        1,
+        0,
+        27
+      ]
+    ],
+    "count": 120,
+    "expected_calibration_error": 0.110687,
+    "log_loss": 0.266385,
+    "macro_f1": 0.917128,
+    "macro_precision": 0.919285,
+    "macro_recall": 0.916667,
+    "mean_confidence": 0.838103,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 110,
+        "coverage": 0.916667,
+        "errors": 4,
+        "selective_accuracy": 0.963636,
+        "selective_risk": 0.036364
+      },
+      "0.70": {
+        "count": 103,
+        "coverage": 0.858333,
+        "errors": 2,
+        "selective_accuracy": 0.980583,
+        "selective_risk": 0.019417
+      },
+      "0.80": {
+        "count": 90,
+        "coverage": 0.75,
+        "errors": 2,
+        "selective_accuracy": 0.977778,
+        "selective_risk": 0.022222
+      },
+      "0.90": {
+        "count": 49,
+        "coverage": 0.408333,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "dataset_sha256": "ed70f424736f0c1ef1978880c11cba859a47a2d23e2b5f060eed9a3755ba8f8f",
+  "environment": {
+    "joblib": "1.6.0",
+    "numpy": "2.5.4",
+    "python": "3.14.6",
+    "python_major_minor": "3.14",
+    "scikit_learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "estimator": {
+    "calibration": "sigmoid on dedicated group-disjoint calibration partition",
+    "classifier": "L2 class-balanced LogisticRegression",
+    "features": "FeatureUnion(word TF-IDF 1-2 grams, character TF-IDF 3-5 grams)",
+    "selected_C": 0.05
+  },
+  "generalization_gap": {
+    "accuracy": 0.083333,
+    "macro_f1": 0.082872
+  },
+  "grouped_cross_validation": {
+    "candidates": [
+      {
+        "C": 0.05,
+        "mean_train_macro_f1": 1.0,
+        "mean_validation_accuracy": 1.0,
+        "mean_validation_log_loss": 0.879617,
+        "mean_validation_macro_f1": 1.0,
+        "std_validation_macro_f1": 0.0
+      },
+      {
+        "C": 0.1,
+        "mean_train_macro_f1": 1.0,
+        "mean_validation_accuracy": 1.0,
+        "mean_validation_log_loss": 0.66544,
+        "mean_validation_macro_f1": 1.0,
+        "std_validation_macro_f1": 0.0
+      },
+      {
+        "C": 0.25,
+        "mean_train_macro_f1": 1.0,
+        "mean_validation_accuracy": 1.0,
+        "mean_validation_log_loss": 0.421163,
+        "mean_validation_macro_f1": 1.0,
+        "std_validation_macro_f1": 0.0
+      },
+      {
+        "C": 0.5,
+        "mean_train_macro_f1": 1.0,
+        "mean_validation_accuracy": 1.0,
+        "mean_validation_log_loss": 0.28725,
+        "mean_validation_macro_f1": 1.0,
+        "std_validation_macro_f1": 0.0
+      },
+      {
+        "C": 1.0,
+        "mean_train_macro_f1": 1.0,
+        "mean_validation_accuracy": 1.0,
+        "mean_validation_log_loss": 0.192233,
+        "mean_validation_macro_f1": 1.0,
+        "std_validation_macro_f1": 0.0
+      }
+    ],
+    "selected_C": 0.05,
+    "selected_train_validation_gap": 0.0,
+    "selection_metric": "macro_f1",
+    "strategy": "5-fold StratifiedGroupKFold by semantic template family"
+  },
+  "label_order": [
+    "Complaints",
+    "Credit",
+    "Loans",
+    "Treasury"
+  ],
+  "model_version": "sklearn-word-char-logreg-v2",
+  "ood_count": 12,
+  "ood_rejection": {
+    "count": 12,
+    "false_auto_route_count": 0,
+    "false_auto_route_rate": 0.0,
+    "maximum_confidence": 0.799788,
+    "mean_confidence": 0.553811,
+    "predicted_class_counts": {
+      "Complaints": 3,
+      "Credit": 2,
+      "Loans": 7
+    },
+    "rejected_count": 12,
+    "rejection_rate": 1.0,
+    "selected_threshold": 0.8
+  },
+  "preprocessing": {
+    "all_pairwise_split_text_overlap": 0,
+    "all_pairwise_template_family_overlap": 0,
+    "implementation": "EmailPreprocessor/PIIRedactor",
+    "pii_free_model_text": true
+  },
+  "random_seed": 42,
+  "selected_routing_threshold": 0.8,
+  "standard_validation": {
+    "accuracy": 1.0,
+    "brier_score": 0.024431,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Credit": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Loans": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "Treasury": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 20.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 80.0
+      },
+      "weighted avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 80.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        20,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        20,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        20,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        20
+      ]
+    ],
+    "count": 80,
+    "expected_calibration_error": 0.108453,
+    "log_loss": 0.11806,
+    "macro_f1": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "mean_confidence": 0.891547,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 80,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.70": {
+        "count": 78,
+        "coverage": 0.975,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.80": {
+        "count": 71,
+        "coverage": 0.8875,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.90": {
+        "count": 44,
+        "coverage": 0.55,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "threshold_selection": {
+    "minimum_threshold": 0.8,
+    "selected_count": 80,
+    "selected_coverage": 1.0,
+    "selected_precision": 1.0,
+    "target_precision": 0.98
+  },
+  "train_class_counts": {
+    "Complaints": 120,
+    "Credit": 120,
+    "Loans": 120,
+    "Treasury": 120
+  },
+  "train_count": 480,
+  "train_metrics": {
+    "accuracy": 1.0,
+    "brier_score": 0.002138,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 120.0
+      },
+      "Credit": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 120.0
+      },
+      "Loans": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 120.0
+      },
+      "Treasury": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 120.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 480.0
+      },
+      "weighted avg": {
+        "f1-score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 480.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        120,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        120,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        120,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        120
+      ]
+    ],
+    "count": 480,
+    "expected_calibration_error": 0.033313,
+    "log_loss": 0.034047,
+    "macro_f1": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "mean_confidence": 0.966687,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 480,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.70": {
+        "count": 480,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.80": {
+        "count": 480,
+        "coverage": 1.0,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      },
+      "0.90": {
+        "count": 475,
+        "coverage": 0.989583,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "trained_at": "2026-10-30T11:30:09.836282Z",
+  "validation": {
+    "accuracy": 0.916667,
+    "brier_score": 0.1228,
+    "classification_report": {
+      "Complaints": {
+        "f1-score": 0.8888888888888888,
+        "precision": 0.8484848484848485,
+        "recall": 0.9333333333333333,
+        "support": 30.0
+      },
+      "Credit": {
+        "f1-score": 0.9333333333333333,
+        "precision": 0.9333333333333333,
+        "recall": 0.9333333333333333,
+        "support": 30.0
+      },
+      "Loans": {
+        "f1-score": 0.9152542372881356,
+        "precision": 0.9310344827586207,
+        "recall": 0.9,
+        "support": 30.0
+      },
+      "Treasury": {
+        "f1-score": 0.9310344827586207,
+        "precision": 0.9642857142857143,
+        "recall": 0.9,
+        "support": 30.0
+      },
+      "accuracy": 0.9166666666666666,
+      "macro avg": {
+        "f1-score": 0.9171277355672446,
+        "precision": 0.9192845947156292,
+        "recall": 0.9166666666666666,
+        "support": 120.0
+      },
+      "weighted avg": {
+        "f1-score": 0.9171277355672446,
+        "precision": 0.9192845947156292,
+        "recall": 0.9166666666666666,
+        "support": 120.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        28,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        28,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        27,
+        1
+      ],
+      [
+        2,
+        1,
+        0,
+        27
+      ]
+    ],
+    "count": 120,
+    "expected_calibration_error": 0.110687,
+    "log_loss": 0.266385,
+    "macro_f1": 0.917128,
+    "macro_precision": 0.919285,
+    "macro_recall": 0.916667,
+    "mean_confidence": 0.838103,
+    "routing_thresholds": {
+      "0.60": {
+        "count": 110,
+        "coverage": 0.916667,
+        "errors": 4,
+        "selective_accuracy": 0.963636,
+        "selective_risk": 0.036364
+      },
+      "0.70": {
+        "count": 103,
+        "coverage": 0.858333,
+        "errors": 2,
+        "selective_accuracy": 0.980583,
+        "selective_risk": 0.019417
+      },
+      "0.80": {
+        "count": 90,
+        "coverage": 0.75,
+        "errors": 2,
+        "selective_accuracy": 0.977778,
+        "selective_risk": 0.022222
+      },
+      "0.90": {
+        "count": 49,
+        "coverage": 0.408333,
+        "errors": 0,
+        "selective_accuracy": 1.0,
+        "selective_risk": 0.0
+      }
+    }
+  },
+  "validation_class_counts": {
+    "Complaints": 20,
+    "Credit": 20,
+    "Loans": 20,
+    "Treasury": 20
+  },
+  "validation_count": 80
+}

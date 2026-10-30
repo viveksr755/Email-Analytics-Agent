@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import TypedDict
 from uuid import uuid4
 
 from langgraph.graph import END, StateGraph
 
 from .audit import ImmutableAuditLog
-from .classification import BaselineCTDClassifier
+from .classification import CTDClassifier
 from .config import AgentConfig
 from .guardrails import ComplianceGuardrailAgent, GuardrailResult
 from .models import (
@@ -21,7 +22,8 @@ from .models import (
 from .preprocessing import EmailPreprocessor
 from .rag import RAGClassificationAgent, RAGResult
 from .routing import MockQueueRouter, SummarizerRoutingAgent
-from .storage import MockMongoStore
+from .storage import ClaimAction, EmailDocumentStore
+from .taxonomy import UNKNOWN_CTD
 
 
 class WorkflowState(TypedDict, total=False):
@@ -39,13 +41,15 @@ class WorkflowState(TypedDict, total=False):
     decision: str
     decision_path: tuple[str, ...]
     confidence_scores: dict[str, float]
+    downstream_id: str
+    storage_key: str
     result: ProcessResult
 
 
 class ManagerAgent:
     """Coordinate classifiers, guardrails, RAG, summarization, and routing.
 
-    The graph gives safety decisions explicit edges: high-confidence baseline
+    The graph gives safety decisions explicit edges: high-confidence trained-ML
     results bypass RAG, low-confidence results enter RAG, and risky or still
     ambiguous cases terminate in the RM review queue.
     """
@@ -53,19 +57,19 @@ class ManagerAgent:
     def __init__(
         self,
         preprocessor: EmailPreprocessor,
-        baseline_classifier: BaselineCTDClassifier,
+        ml_classifier: CTDClassifier,
         rag_agent: RAGClassificationAgent,
         guardrail: ComplianceGuardrailAgent,
         summarizer: SummarizerRoutingAgent,
         queues: MockQueueRouter,
-        document_store: MockMongoStore,
+        document_store: EmailDocumentStore,
         config: AgentConfig | None = None,
         audit_log: ImmutableAuditLog | None = None,
     ) -> None:
         """Inject all layer adapters and compile the LangGraph workflow."""
 
         self.preprocessor = preprocessor
-        self.baseline_classifier = baseline_classifier
+        self.ml_classifier = ml_classifier
         self.rag_agent = rag_agent
         self.guardrail = guardrail
         self.summarizer = summarizer
@@ -94,10 +98,14 @@ class ManagerAgent:
         workflow.add_node("finalize", self._finalize_node)
 
         workflow.set_entry_point("preprocess")
-        workflow.add_edge("preprocess", "ml_classify")
+        workflow.add_conditional_edges(
+            "preprocess",
+            self._after_preprocess,
+            {"ml_classify": "ml_classify", "rm_review": "rm_review"},
+        )
         workflow.add_conditional_edges(
             "ml_classify",
-            self._after_baseline,
+            self._after_ml,
             {"rag_classify": "rag_classify", "summarize": "summarize", "rm_review": "rm_review"},
         )
         workflow.add_conditional_edges(
@@ -124,18 +132,25 @@ class ManagerAgent:
             "decision_path": self._append_path(state, "preprocess"),
         }
 
-    def _ml_classify_node(self, state: WorkflowState) -> WorkflowState:
-        """Run the inexpensive baseline model on PII-safe text."""
+    @staticmethod
+    def _after_preprocess(state: WorkflowState) -> str:
+        """Bypass every model when inbound controls require human review."""
 
-        prediction = self.baseline_classifier.predict(state["preprocessed"].model_text)
+        inspection = state["inbound_guardrail"]
+        return "rm_review" if inspection.requires_human_review else "ml_classify"
+
+    def _ml_classify_node(self, state: WorkflowState) -> WorkflowState:
+        """Run the persisted scikit-learn classifier on PII-safe text."""
+
+        prediction = self.ml_classifier.predict(state["preprocessed"].model_text)
         return {
             "prediction": prediction,
-            "confidence_scores": {"baseline": prediction.confidence},
+            "confidence_scores": {"ml": prediction.confidence},
             "decision_path": self._append_path(state, "ml_classify"),
         }
 
-    def _after_baseline(self, state: WorkflowState) -> str:
-        """Choose review, direct route, or RAG from risk and ML confidence."""
+    def _after_ml(self, state: WorkflowState) -> str:
+        """Choose review, direct route, or RAG from risk and trained-ML confidence."""
 
         if state.get("risk_flags"):
             return "rm_review"
@@ -200,19 +215,30 @@ class ManagerAgent:
             summary=state["summary"],
             prediction=state["prediction"],
             risk_flags=state.get("risk_flags", ()),
+            source_idempotency_key=str(
+                state["email"].metadata.get("idempotency_key")
+                or state["email"].message_id
+            ),
         )
-        self.queues.enqueue(item)
+        downstream_id = self.queues.enqueue(item)
         return {
             "decision": "auto_route",
             "target_queue": target_queue,
+            "downstream_id": downstream_id,
             "decision_path": self._append_path(state, "auto_route"),
         }
 
     def _rm_review_node(self, state: WorkflowState) -> WorkflowState:
         """Create a safe summary and enqueue unresolved or risky cases for an RM."""
 
+        prediction = state.get("prediction") or Prediction(
+            UNKNOWN_CTD,
+            0.0,
+            "compliance-guardrail-v1",
+            "Classification bypassed because inbound guardrails require human review.",
+        )
         summary = state.get("summary") or self.summarizer.summarize(
-            state["preprocessed"], state["prediction"]
+            state["preprocessed"], prediction
         )
         output_check = self.guardrail.inspect_outbound(summary)
         self.guardrail.assert_pii_free(output_check.safe_text)
@@ -222,14 +248,20 @@ class ManagerAgent:
             message_id=state["email"].message_id,
             target_queue="rm-review",
             summary=output_check.safe_text,
-            prediction=state["prediction"],
+            prediction=prediction,
             risk_flags=flags,
+            source_idempotency_key=str(
+                state["email"].metadata.get("idempotency_key")
+                or state["email"].message_id
+            ),
         )
-        self.queues.enqueue(item)
+        downstream_id = self.queues.enqueue(item)
         return {
             "decision": "human_review",
             "target_queue": "rm-review",
             "summary": output_check.safe_text,
+            "prediction": prediction,
+            "downstream_id": downstream_id,
             "risk_flags": flags,
             "decision_path": self._append_path(state, "rm_review"),
         }
@@ -237,7 +269,6 @@ class ManagerAgent:
     def _finalize_node(self, state: WorkflowState) -> WorkflowState:
         """Persist the CTD result and construct the immutable public outcome."""
 
-        self.document_store.save_classification(state["email"].message_id, state["prediction"])
         path = self._append_path(state, "finalize")
         result = ProcessResult(
             run_id=state["run_id"],
@@ -247,24 +278,102 @@ class ManagerAgent:
             target_queue=state["target_queue"],
             summary=state["summary"],
             decision_path=path,
+            downstream_id=state["downstream_id"],
+            storage_key=state["storage_key"],
             risk_flags=state.get("risk_flags", ()),
             confidence_scores=state.get("confidence_scores", {}),
         )
-        self.audit_log.record_decision(result)
+        self.document_store.save_outcome(result)
+        try:
+            self.audit_log.record_decision(result)
+            self.document_store.mark_audited(result.storage_key, result.run_id)
+        except Exception as error:
+            try:
+                self.document_store.mark_audit_failed(
+                    result.storage_key,
+                    result.run_id,
+                    type(error).__name__,
+                )
+            except Exception:
+                pass
+            raise
         return {"decision_path": path, "result": result}
 
     def process_email(self, email: EmailMessage) -> ProcessResult:
-        """Persist one raw email, execute the graph, and return its final result."""
+        """Claim one email, skip completed work, or execute its saved workflow."""
 
-        self.document_store.save_email(email)
-        final_state = self.graph.invoke(
-            {
-                "run_id": str(uuid4()),
-                "email": email,
-                "risk_flags": (),
-                "decision_path": (),
-                "confidence_scores": {},
-            }
+        claim = self.document_store.claim_email(email, str(uuid4()))
+        if claim.action is ClaimAction.SKIP:
+            outcome = self.document_store.load_outcome(claim.idempotency_key)
+            if outcome is None:
+                raise RuntimeError("completed email has no persisted outcome")
+            return replace(outcome, was_skipped=True)
+        if claim.action is ClaimAction.AUDIT_ONLY:
+            outcome = self.document_store.load_outcome(claim.idempotency_key)
+            if outcome is None:
+                raise RuntimeError("audit-only email has no persisted outcome")
+            return self._repair_audit(outcome)
+        if claim.action is ClaimAction.IN_PROGRESS:
+            raise RuntimeError(f"email is already being processed: {email.message_id}")
+        if claim.action not in (ClaimAction.NEW, ClaimAction.RESUME):
+            raise RuntimeError(f"unsupported email claim action: {claim.action}")
+        return self.process_saved_email(email, claim.run_id, claim.idempotency_key)
+
+    def process_saved_email(
+        self,
+        email: EmailMessage,
+        run_id: str,
+        storage_key: str | None = None,
+    ) -> ProcessResult:
+        """Execute LangGraph for an email already claimed and stored by ingestion."""
+
+        resolved_storage_key = storage_key or str(
+            email.metadata.get("idempotency_key") or email.message_id
         )
-        return final_state["result"]
+        self.document_store.mark_processing(resolved_storage_key, run_id)
+        try:
+            final_state = self.graph.invoke(
+                {
+                    "run_id": run_id,
+                    "email": email,
+                    "storage_key": resolved_storage_key,
+                    "risk_flags": (),
+                    "decision_path": (),
+                    "confidence_scores": {},
+                }
+            )
+            return final_state["result"]
+        except Exception as error:
+            if self.document_store.load_outcome(resolved_storage_key) is None:
+                try:
+                    self.document_store.mark_retry_pending(
+                        resolved_storage_key,
+                        run_id,
+                        "workflow",
+                        type(error).__name__,
+                    )
+                except Exception:
+                    pass
+            raise
+
+    def _repair_audit(self, outcome: ProcessResult) -> ProcessResult:
+        """Retry only the idempotent audit append for a persisted outcome."""
+
+        try:
+            self.audit_log.record_decision(outcome)
+            self.document_store.mark_audited(
+                outcome.storage_key or outcome.message_id,
+                outcome.run_id,
+            )
+        except Exception as error:
+            try:
+                self.document_store.mark_audit_failed(
+                    outcome.storage_key or outcome.message_id,
+                    outcome.run_id,
+                    type(error).__name__,
+                )
+            except Exception:
+                pass
+            raise
+        return replace(outcome, was_skipped=True)
 
